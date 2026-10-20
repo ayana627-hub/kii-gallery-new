@@ -118,14 +118,17 @@ export default function GalleryCard({
   <img
     src={coverImageUrl}
     alt={title}
-    style={{
-      width: "100%",
-      aspectRatio: "16 / 9",
-      objectFit: "cover",
-      borderRadius: 16,
-      marginBottom: 12,
-      display: "block",
-    }}
+style={{
+  width: "100%",
+  aspectRatio: "3 / 2",
+  height: "auto",
+  objectFit: "cover",
+  objectPosition: "center",
+  borderRadius: 12,
+  marginBottom: 12,
+  display: "block",
+}}
+
   />
 )}
       <h3 style={{ margin: "0 0 12px" }}>{title}</h3>
@@ -214,13 +217,17 @@ export default function GalleryCard({
   );
 }
 
+
 const cardStyle = {
   background: "#fff",
-  padding: 20,
-  borderRadius: 20,
-  marginBottom: 20,
-  boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
+  padding: 12,
+  borderRadius: 16,
+  marginBottom: 0,
+  boxShadow: "0 4px 14px rgba(0,0,0,0.06)",
+  minWidth: 0,
+  overflow: "hidden" as const,
 };
+
 
 const editButton = {
   padding: "11px 18px",

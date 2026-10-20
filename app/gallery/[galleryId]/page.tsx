@@ -607,27 +607,82 @@ async function loadImages(currentFolderId: string) {
             ← トップに戻る
           </button>
 
-          <a
-            href={`/api/r2/download-zip?galleryId=${folderId}`}
-            style={{
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  padding: "17px 22px",
-  borderRadius: 24,
-  border: "1px solid rgba(255,255,255,0.65)",
-  background: "rgba(240, 218, 92, 0.72)",
-  color: "#5D4B3E",
-  backdropFilter: "blur(14px)",
-  WebkitBackdropFilter: "blur(14px)",
-  boxShadow: "0 8px 24px rgba(93,75,62,0.10)",
-  textDecoration: "none",
-  fontWeight: 600,
-  fontSize: 16,
-}}
-          >
-            📦 写真をまとめてダウンロード
-          </a>
+          <div style={{ position: "relative", display: "inline-block" }}>
+  <button
+    type="button"
+    onClick={(e) => {
+      e.stopPropagation();
+      const menu = document.getElementById("kii-zip-menu");
+      if (menu) {
+        menu.style.display =
+          menu.style.display === "none" ? "flex" : "none";
+      }
+    }}
+    style={{
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "17px 22px",
+      borderRadius: 24,
+      border: "1px solid rgba(255,255,255,0.65)",
+      background: "rgba(240,218,92,0.72)",
+      color: "#5D4B3E",
+      backdropFilter: "blur(14px)",
+      boxShadow: "0 8px 24px rgba(93,75,62,0.10)",
+      fontWeight: 600,
+      fontSize: 16,
+      cursor: "pointer",
+    }}
+  >
+    📦 写真をまとめてダウンロード
+  </button>
+
+  <div
+    id="kii-zip-menu"
+    style={{
+      display: "none",
+      flexDirection: "column",
+      gap: 10,
+      position: "absolute",
+      top: "110%",
+      left: 0,
+      zIndex: 100,
+      padding: 16,
+      borderRadius: 18,
+      background: "#fffaf1",
+      boxShadow: "0 8px 30px rgba(0,0,0,0.15)",
+      minWidth: 260,
+    }}
+  >
+    <a
+      href={`/api/r2/download-zip?galleryId=${folderId}`}
+      style={{
+        padding: 14,
+        borderRadius: 12,
+        background: "#fff",
+        color: "#5D4B3E",
+        textDecoration: "none",
+        textAlign: "center",
+      }}
+    >
+      📷 高画質で保存
+    </a>
+
+    <a
+      href={`/api/r2/download-zip?galleryId=${folderId}&size=large`}
+      style={{
+        padding: 14,
+        borderRadius: 12,
+        background: "#f9e7a4",
+        color: "#5D4B3E",
+        textDecoration: "none",
+        textAlign: "center",
+      }}
+    >
+      📱 スマホサイズで保存
+    </a>
+  </div>
+</div>
 
           <div
             style={{
@@ -808,38 +863,33 @@ async function loadImages(currentFolderId: string) {
             <span style={{ transform: "translateY(-2px)" }}>›</span>
           </button>
 
-          <img
-            src={`${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${selectedImage.key}`}
-            alt={selectedImage.key}
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              maxWidth: "95vw",
-              maxHeight: "90vh",
-              objectFit: "contain",
-              borderRadius: 14,
-            }}
-          />
-<a
-  href={`/api/r2/download?key=${encodeURIComponent(selectedImage.key)}`}
-  onClick={(e) => e.stopPropagation()}
-  style={{
-    position: "absolute",
-    bottom: 24,
-    left: "50%",
-    transform: "translateX(-50%)",
-    padding: "10px 18px",
-    borderRadius: 999,
-    background: "rgba(255,255,255,0.92)",
-    color: "#5D4B3E",
-    textDecoration: "none",
-    fontSize: 14,
-    cursor: "pointer",
-    zIndex: 10001,
-    whiteSpace: "nowrap",
-  }}
->
-  📷 この写真を保存
-</a>
+<div className="kii-photo-viewer">
+  <img
+    src={`${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${selectedImage.key}`}
+    alt={selectedImage.key}
+    onClick={(e) => e.stopPropagation()}
+    className="kii-viewer-image"
+  />
+
+  <div className="kii-download-buttons">
+    <a
+      href={`/api/r2/download?key=${encodeURIComponent(selectedImage.key)}`}
+      onClick={(e) => e.stopPropagation()}
+      className="kii-download-btn"
+    >
+      📷 オリジナル画質で保存
+    </a>
+
+    <a
+      href={`/api/r2/download?key=${encodeURIComponent(selectedImage.key)}&size=large`}
+      onClick={(e) => e.stopPropagation()}
+      className="kii-download-btn kii-download-btn-large"
+    >
+      📷 Lサイズで保存
+    </a>
+  </div>
+</div>
+
         </div>
       )}
 

@@ -34,6 +34,7 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const galleryId = searchParams.get("galleryId");
+    const size = searchParams.get("size") === "large" ? "large" : "original";
 
     if (!galleryId) {
   return NextResponse.json(
@@ -87,8 +88,25 @@ export async function GET(request: Request) {
 
       if (!result.Body) continue;
 
-      const bytes = await result.Body.transformToByteArray();
-      const originalName = getOriginalFileName(key);
+      let bytes = await result.Body.transformToByteArray();
+const originalName = getOriginalFileName(key);
+
+if (size === "large") {
+  const sharp = (await import("sharp")).default;
+
+  bytes = new Uint8Array(
+    await sharp(Buffer.from(bytes))
+      .rotate()
+      .resize({
+        width: 2048,
+        height: 2048,
+        fit: "inside",
+        withoutEnlargement: true,
+      })
+      .jpeg({ quality: 85 })
+      .toBuffer()
+  );
+}
 
       let fileName = originalName;
       let number = 2;
@@ -127,7 +145,7 @@ export async function GET(request: Request) {
       headers: {
         "Content-Type": "application/zip",
         "Content-Disposition":
-          'attachment; filename="KiiGallery.zip"',
+  `attachment; filename="KiiGallery_${size}.zip"`,
         "Content-Length": String(zipData.length),
       },
     });

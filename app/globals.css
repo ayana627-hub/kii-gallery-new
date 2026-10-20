@@ -24,3 +24,92 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.gallery-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+@media (max-width: 767px) {
+  .gallery-list {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+
+/* 写真と保存ボタン全体 */
+.kii-photo-viewer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  max-height: 94dvh;
+}
+
+/* 写真を大きく表示 */
+.kii-viewer-image {
+  display: block;
+  max-width: 90vw;
+  max-height: 65dvh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 14px;
+}
+
+/* パソコン：横並び */
+.kii-download-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+/* 保存ボタン */
+.kii-download-btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: #fff9eb;
+  color: #5d4b3e;
+  border: 1px solid #e9dfcc;
+  text-decoration: none;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.kii-download-btn-large {
+  background: #f9e7a4;
+}
+
+/* スマホ：縦並び */
+@media (max-width: 600px) {
+  .kii-photo-viewer {
+    gap: 10px;
+  }
+
+  .kii-viewer-image {
+  max-width: 90vw;
+  max-height: 55dvh;
+}
+
+  .kii-download-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .kii-download-btn {
+    width: 100%;
+    max-width: 280px;
+  }
+}

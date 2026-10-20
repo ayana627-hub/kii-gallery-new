@@ -252,7 +252,7 @@ setCoverImageKey={setCoverImageKey}
 />
 )}
 
-          <div style={cardStyle}>
+          <div className="gallery-list">
             {galleries.length === 0 ? (
               <p style={{ margin: 0 }}>まだギャラリーはありません</p>
             ) : (

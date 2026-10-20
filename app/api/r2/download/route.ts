@@ -1,3 +1,4 @@
+import sharp from "sharp";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -15,6 +16,7 @@ const r2 = new S3Client({
 export async function GET(request: NextRequest) {
   try {
     const key = request.nextUrl.searchParams.get("key");
+    const size = request.nextUrl.searchParams.get("size") ?? "original";
     const bucketName = process.env.R2_BUCKET_NAME;
 
     if (!key) {
@@ -50,19 +52,41 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const bytes = await result.Body.transformToByteArray();
-    const fileName = key.split("/").pop() ?? "photo.jpg";
 
-    return new NextResponse(Buffer.from(bytes), {
-      status: 200,
-      headers: {
-        "Content-Type": result.ContentType ?? "application/octet-stream",
-        "Content-Disposition": `attachment; filename*=UTF-8''${encodeURIComponent(
-          fileName
-        )}`,
-        "Content-Length": String(bytes.length),
-      },
-    });
+const bytes = await result.Body.transformToByteArray();
+const fileName = key.split("/").pop() ?? "photo.jpg";
+
+let downloadData: Buffer<ArrayBufferLike> = Buffer.from(bytes);
+let downloadName = fileName;
+let contentType = result.ContentType ?? "application/octet-stream";
+
+if (size === "large") {
+  downloadData = await sharp(downloadData)
+    .rotate()
+    .resize({
+      width: 2048,
+      height: 2048,
+      fit: "inside",
+      withoutEnlargement: true,
+    })
+    .jpeg({ quality: 85, mozjpeg: true })
+    .toBuffer();
+
+  downloadName = fileName.replace(/\.[^.]+$/, "") + "_L.jpg";
+  contentType = "image/jpeg";
+}
+
+return new NextResponse(
+  Uint8Array.from(downloadData).buffer,
+  {
+  status: 200,
+  headers: {
+    "Content-Type": contentType,
+    "Content-Disposition": `attachment; filename*=UTF-8''${encodeURIComponent(downloadName)}`,
+    "Content-Length": String(downloadData.length),
+  },
+});
+
   } catch (error) {
     console.error("R2 download error:", error);
 
