@@ -504,29 +504,79 @@ async function loadImages(currentFolderId: string) {
                   お気に入り
                 </button>
 
-                {/* まとめて保存 */}
-                <a
-                  href={`/api/r2/download-zip?galleryId=${folderId}`}
-                  style={{
-                    padding: "17px 22px",
-                    borderRadius: 24,
-                    border: "1px solid rgba(255,255,255,0.65)",
-                    background: "rgba(240, 218, 92, 0.72)",
-                    color: "#5D4B3E",
-                    backdropFilter: "blur(14px)",
-                    WebkitBackdropFilter: "blur(14px)",
-                    boxShadow:
-                      "inset 0 1px 1px rgba(255,255,255,0.75), 0 7px 18px rgba(93,75,62,0.14)",
-                    cursor: "pointer",
-                    fontSize: 16,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    textAlign: "center",
-                  }}
-                >
-                  まとめて保存
-                </a>
+                
+{/* まとめて保存 */}
+<div style={{ position: "relative" }}>
+  <details style={{ position: "relative" }}>
+    <summary
+      style={{
+        padding: "17px 22px",
+        borderRadius: 24,
+        border: "1px solid rgba(255,255,255,0.65)",
+        background: "rgba(240, 218, 92, 0.72)",
+        color: "#5D4B3E",
+        backdropFilter: "blur(14px)",
+        WebkitBackdropFilter: "blur(14px)",
+        boxShadow:
+          "inset 0 1px 1px rgba(255,255,255,0.75), 0 7px 18px rgba(93,75,62,0.14)",
+        cursor: "pointer",
+        fontSize: 16,
+        textAlign: "center",
+        listStyle: "none",
+      }}
+    >
+      まとめて保存
+    </summary>
+
+    <div
+      style={{
+        position: "absolute",
+        bottom: "calc(100% + 8px)",
+        left: 0,
+        width: "100%",
+        minWidth: 190,
+        background: "#fffdf8",
+        borderRadius: 16,
+        padding: 8,
+        boxShadow: "0 8px 24px rgba(93,75,62,0.18)",
+        zIndex: 20,
+        display: "grid",
+        gap: 6,
+      }}
+    >
+      <a
+        href={`/api/r2/download-zip?galleryId=${folderId}`}
+        style={{
+          padding: 12,
+          borderRadius: 10,
+          background: "#fff",
+          color: "#5D4B3E",
+          textDecoration: "none",
+          textAlign: "center",
+          fontSize: 14,
+        }}
+      >
+        📷 高画質で保存
+      </a>
+
+      <a
+        href={`/api/r2/download-zip?galleryId=${folderId}&size=large`}
+        style={{
+          padding: 12,
+          borderRadius: 10,
+          background: "#f9e7a4",
+          color: "#5D4B3E",
+          textDecoration: "none",
+          textAlign: "center",
+          fontSize: 14,
+        }}
+      >
+        📱 スマホサイズで保存
+      </a>
+    </div>
+  </details>
+</div>
+
 
                 {/* 家族にシェア */}
                 <button
