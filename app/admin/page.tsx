@@ -35,8 +35,12 @@ export default function AdminPage() {
   const [client, setClient] = useState("");
   const [location, setLocation] = useState("");
   const [category, setCategory] = useState("");
+  const [textColor, setTextColor] = useState("brown");
   const [galleryPassword, setGalleryPassword] = useState("");
-  const [expiresAt, setExpiresAt] = useState("");
+  const [expiresAt, setExpiresAt] = useState(() => {
+  const date = new Date();
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+});
   const [coverImageKey, setCoverImageKey] = useState("");
 
   useEffect(() => {
@@ -84,7 +88,10 @@ const resetForm = () => {
   setTitle("");
   setCategory("");
   setGalleryPassword("");
-  setExpiresAt("");
+ const date = new Date();
+setExpiresAt(
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
+);
   setCoverImageKey("");
   setEditingId(null);
   setShowForm(false);
@@ -95,9 +102,18 @@ const handleEditGallery = (gallery: any) => {
   setClient(gallery.client ?? "");
   setLocation(gallery.location ?? "");
   setCategory(gallery.category ?? "");
+  setTextColor(gallery.textColor ?? "brown");
   setTitle(gallery.title ?? "");
   setGalleryPassword(gallery.password ?? "");
-  setExpiresAt(gallery.expiresAt ?? "");
+  if (gallery.expiresAt) {
+  const date = new Date(`${gallery.expiresAt}T12:00:00`);
+  date.setDate(date.getDate() - 21);
+  setExpiresAt(
+    `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
+  );
+} else {
+  setExpiresAt("");
+}
   setCoverImageKey(gallery.coverImageKey ?? "");
   setShowForm(true);
 
@@ -120,9 +136,15 @@ const handleUpdateGallery = async () => {
   client,
   location,
   category,
+  textColor,
   title,
   password: galleryPassword,
-  expiresAt,
+expiresAt: (() => {
+  const date = new Date(`${expiresAt}T12:00:00`);
+  date.setDate(date.getDate() + 21);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+})(),
+
   coverImageKey,
   updatedAt: serverTimestamp(),
 });
@@ -184,9 +206,14 @@ await addDoc(collection(db, "galleries"), {
   client,
   location,
   category,
+  textColor,
   title,
   password: galleryPassword,
-  expiresAt,
+  expiresAt: (() => {
+  const date = new Date(`${expiresAt}T12:00:00`);
+  date.setDate(date.getDate() + 21);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+})(),
   coverImageKey,
   driveFolderId: driveFolder.id,
   driveFolderUrl: driveFolder.webViewLink,
@@ -196,6 +223,7 @@ await addDoc(collection(db, "galleries"), {
  setClient("");
 setLocation("");
 setCategory("");
+setTextColor("brown");
 setTitle("");
 setGalleryPassword("");
 setExpiresAt("");
@@ -212,10 +240,25 @@ setShowForm(false);
     return (
       <main style={pageStyle}>
         <div style={containerStyle}>
-          <header style={headerStyle}>
+          <header
+  style={{
+    ...headerStyle,
+    ...(typeof window !== "undefined" && window.innerWidth <= 600
+      ? { flexDirection: "column" as const, alignItems: "stretch" as const, gap: 14 }
+      : {}),
+  }}
+>
             <h1 style={{ margin: 0 }}>Kii Gallery 管理画面</h1>
 
-            <div style={{ display: "flex", gap: 12 }}>
+            <div
+  style={{
+    display: "flex",
+    gap: 10,
+    ...(typeof window !== "undefined" && window.innerWidth <= 600
+      ? { flexDirection: "column" as const }
+      : {}),
+  }}
+>
               <button onClick={() => setShowForm(true)} style={roundButtonStyle}>
                 ＋ 新しいギャラリー
               </button>
@@ -232,6 +275,8 @@ setShowForm(false);
   location={location}
   category={category}
   title={title}
+  textColor={textColor}
+setTextColor={setTextColor}
   galleryPassword={galleryPassword}
   expiresAt={expiresAt}
 coverImageKey={coverImageKey}
@@ -341,8 +386,8 @@ const roundButtonStyle = {
   padding: "14px 22px",
   border: "none",
   borderRadius: 999,
-  background: "#d6b15d",
-  color: "#fff",
+  background: "#E9CD72",
+  color: "#5D4B3E",
   fontWeight: "bold",
   cursor: "pointer",
 };

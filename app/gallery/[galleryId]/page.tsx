@@ -21,6 +21,8 @@ export default function GalleryPage() {
   const [expiresAt, setExpiresAt] = useState("");
   const [folderId, setFolderId] = useState("");
   const [coverImageKey, setCoverImageKey] = useState("");
+  const [textColor, setTextColor] = useState("brown");
+  const displayTextColor = textColor === "white" ? "#FFFFFF" : "#5D4B3E";
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [showGallery, setShowGallery] = useState(false);
 
@@ -87,6 +89,16 @@ export default function GalleryPage() {
     }
 
     const galleryData = gallerySnap.data();
+    // 公開終了日を過ぎていたら表示しない
+if (galleryData.expiresAt) {
+  const today = new Date();
+  const endDate = new Date(`${galleryData.expiresAt}T23:59:59`);
+
+  if (today > endDate) {
+    alert("このギャラリーは公開期間が終了しました🌷");
+    return;
+  }
+}
 
     const currentFolderId = galleryData.driveFolderId ?? "";
 
@@ -97,6 +109,7 @@ export default function GalleryPage() {
     setExpiresAt(galleryData.expiresAt ?? "");
     setSavedPassword(galleryData.password ?? "");
     setCoverImageKey(galleryData.coverImageKey ?? "");
+    setTextColor(galleryData.textColor ?? "brown");
     setFolderId(currentFolderId);
 
     await loadImages(currentFolderId);
@@ -185,9 +198,15 @@ async function loadImages(currentFolderId: string) {
     `/api/r2/list?prefix=${encodeURIComponent(`${currentFolderId}/`)}`
   );
 
-  const data = await response.json();
+ const data = await response.json();
 
-  setImages(data);
+if (!response.ok || !Array.isArray(data)) {
+  console.error("写真一覧の取得に失敗:", data);
+  setImages([]);
+  return;
+}
+
+setImages(data);
 }
 
   if (!isUnlocked) {
@@ -286,6 +305,7 @@ async function loadImages(currentFolderId: string) {
         >
           {/* 背景写真 */}
           <div
+          className="kii-cover-photo"
             style={{
               position: "absolute",
               inset: 0,
@@ -294,7 +314,9 @@ async function loadImages(currentFolderId: string) {
                   ? `url(${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${coverImageKey || images[0].key})`
                   : "none",
               backgroundSize: "cover",
-              backgroundPosition: "center",
+backgroundPosition: "center top",
+backgroundRepeat: "no-repeat",
+backgroundColor: "#FCFAF5",
             }}
           />
 
@@ -313,7 +335,7 @@ async function loadImages(currentFolderId: string) {
               position: "relative",
               zIndex: 1,
               minHeight: "100vh",
-              padding: "28px 32px",
+              padding: "24px 16px",
               display: "flex",
               flexDirection: "column",
             }}
@@ -322,15 +344,16 @@ async function loadImages(currentFolderId: string) {
             <div
               style={{
                 display: "flex",
-                justifyContent: "space-between",
-                alignItems: "flex-start",
-                gap: 24,
+justifyContent: "space-between",
+alignItems: "flex-start",
+gap: 12,
               }}
             >
               {/* Kiiロゴ */}
               <img
-                src="/logo.png"
-                alt="Kii logo"
+  src="/logo.png"
+  alt="Kii logo"
+  className="kii-logo"
                 style={{
                   width: 190,
                   height: "auto",
@@ -342,12 +365,13 @@ async function loadImages(currentFolderId: string) {
               <div
                 style={{
                   textAlign: "right",
-                  color: "#5D4B3E",
+                  color: displayTextColor,
                   marginRight: 28,
                   marginTop: 24,
                 }}
               >
                 <div
+                className="kii-category"
                   style={{
                     fontSize: 40,
                     fontFamily: '"Marcellus", serif',
@@ -359,6 +383,7 @@ async function loadImages(currentFolderId: string) {
                 </div>
 
                 <div
+                 className="kii-tagline"
                   style={{
                     marginTop: 8,
                     fontSize: 18,
@@ -375,11 +400,9 @@ async function loadImages(currentFolderId: string) {
               </div>
             </div>
 
-            {/* 下側を押し下げる */}
-            <div style={{ flex: 1 }} />
-
             {/* 下部：お客さま情報 ＋ 4ボタン */}
             <div
+            className="kii-customer-card md:!mt-auto"
               style={{
                 width: "calc(100% - 80px)",
                 maxWidth: 1100,
@@ -397,7 +420,7 @@ async function loadImages(currentFolderId: string) {
 
               {/* お客さま情報：PCは横並び */}
               <div
-                className="flex flex-col md:flex-row md:items-center"
+                className="kii-customer-info flex flex-col md:flex-row md:items-center"
                 style={{
                   color: "#5D4B3E",
                   gap: 18,
@@ -408,15 +431,20 @@ async function loadImages(currentFolderId: string) {
               >
                 {/* お客さま名 */}
                 <div
+                className="kii-customer-name"
                   style={{
-                    fontSize: 26,
-                    fontWeight: 600,
-                    whiteSpace: "nowrap",
+                    letterSpacing: "-0.04em",
+  fontFamily: '"Yu Mincho", "Hiragino Mincho ProN", serif',
+fontSize: 25,
+fontWeight: 400,
+  whiteSpace: "nowrap",
+  marginLeft: 20,
                   }}
                 >
                   {client}さま
                 </div>
 
+<div className="kii-location-count">
                 {/* 場所 */}
                 <div
                   style={{
@@ -436,20 +464,21 @@ async function loadImages(currentFolderId: string) {
                 >
                   📷 {images.length}枚
                 </div>
+                </div>
 
                 {/* 期限 */}
                 <div
                   style={{
                     fontSize: 18,
                     whiteSpace: "nowrap",
-                  }}
-                >
-                  📅 {expiresAt}まで
+                  }}                >
+📅 公開終了日：{expiresAt}
                 </div>
               </div>
 
               {/* 4ボタン */}
               <div
+              className="kii-action-buttons"
                 style={{
                   display: "grid",
                   gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
@@ -504,7 +533,7 @@ async function loadImages(currentFolderId: string) {
                   お気に入り
                 </button>
 
-                
+
 {/* まとめて保存 */}
 <div style={{ position: "relative" }}>
   <details style={{ position: "relative" }}>
@@ -582,23 +611,14 @@ async function loadImages(currentFolderId: string) {
                 <button
   type="button"
   onClick={async () => {
-    const shareData = {
-      title: "Kii Gallery",
-      text: `${client}さまのお写真が届きました📷`,
-      url: window.location.href,
-    };
+  try {
+    await navigator.clipboard.writeText(window.location.href);
+    alert("URLをコピーしました♡");
+  } catch {
+    alert("URLのコピーに失敗しました");
+  }
+}}
 
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-      } catch {
-        // シェアを閉じた時は何もしない
-      }
-    } else {
-      await navigator.clipboard.writeText(window.location.href);
-      alert("ギャラリーのURLをコピーしました");
-    }
-  }}
   style={{
                     padding: "17px 22px",
                     borderRadius: 24,
@@ -627,6 +647,7 @@ async function loadImages(currentFolderId: string) {
 
       {showGallery && (
         <>
+  <div className="kii-gallery-toolbar">
           <img
             src="/logo.png"
             alt="Kii logo"
@@ -648,7 +669,7 @@ async function loadImages(currentFolderId: string) {
               fontSize: 15,
               cursor: "pointer",
               marginBottom: 20,
-              marginLeft: 12,
+              marginLeft: 8,
               display: "block",
               marginRight: "auto",
             }}
@@ -694,8 +715,9 @@ async function loadImages(currentFolderId: string) {
       flexDirection: "column",
       gap: 10,
       position: "absolute",
-      top: "110%",
-      left: 0,
+      top: "calc(100% + 16px)",
+      left: "50%",
+transform: "translateX(-50%)",
       zIndex: 100,
       padding: 16,
       borderRadius: 18,
@@ -734,10 +756,13 @@ async function loadImages(currentFolderId: string) {
   </div>
 </div>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(220px, 280px))",
+</div> {/* kii-gallery-toolbar の終わり */}
+
+         <div
+  className="kii-photo-grid"
+  style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(220px, 280px))",
               gap: 12,
               width: "100%",
               maxWidth: 1200,
@@ -762,7 +787,7 @@ async function loadImages(currentFolderId: string) {
                 style={{
                   position: "relative",
                   background: "#fff",
-                  borderRadius: 22,
+                  borderRadius: 12,
                   overflow: "hidden",
                   boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
                   cursor: "pointer",
@@ -782,6 +807,7 @@ async function loadImages(currentFolderId: string) {
 
                 <button
                   type="button"
+                  className="kii-favorite-btn"
                   onClick={(e) => {
                     e.stopPropagation();
                     toggleFavorite(image.key);
@@ -843,6 +869,33 @@ async function loadImages(currentFolderId: string) {
           >
             ×
           </button>
+
+<button
+  type="button"
+  onClick={(e) => {
+    e.stopPropagation();
+    toggleFavorite(selectedImage.key);
+  }}
+  style={{
+    position: "absolute",
+    top: 76,
+    right: 24,
+    width: 36,
+    height: 36,
+    border: "none",
+    borderRadius: "50%",
+    background: "rgba(255,255,255,0.9)",
+    fontSize: 22,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 0,
+    cursor: "pointer",
+    zIndex: 10000,
+  }}
+>
+  {favorites.includes(selectedImage.key) ? "❤️" : "♡"}
+</button>
 
           <button
             onClick={(e) => {

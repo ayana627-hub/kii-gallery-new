@@ -145,6 +145,7 @@ style={{
         style={{ display: "none" }}
       />
 
+<div className="kii-card-actions">
       <button
         type="button"
         onClick={onEdit}
@@ -165,7 +166,6 @@ style={{
           color: "#7A6130",
           fontWeight: "bold",
           textDecoration: "none",
-          marginLeft: 8,
         }}
       >
         👀 お客さまページを見る
@@ -182,7 +182,56 @@ style={{
       >
         {uploading ? "アップロード中…" : "📷 写真を追加"}
       </button>
+<button
+  type="button"
+  onClick={() => {
+    const url = `${window.location.origin}/gallery/${galleryId}`;
 
+    const message = `お待たせいたしました♡
+
+お写真の準備ができましたので
+お届けいたします🥰📷
+
+この度は撮影をご依頼いただき
+ありがとうございました♡
+
+下記のリンクからギャラリーをご覧ください🌼
+
+📷 お写真はこちら
+${url}
+
+🔑 パスワード：${password}
+
+お気に入りのお写真を見つけたり、
+ダウンロードして楽しんでいただけたら嬉しいです🫶
+
+ご家族の大切な思い出になりますように♡
+
+Kii｜ともだちカメラマン`;
+
+    const edited = window.prompt(
+      "納品文章を確認・編集してコピーしてください♡",
+      message
+    );
+
+    if (edited !== null) {
+      navigator.clipboard.writeText(edited)
+        .then(() => alert("納品文章をコピーしました♡"))
+        .catch(() => window.prompt("こちらをコピーしてください", edited));
+    }
+  }}
+  style={{
+    padding: "11px 18px",
+    borderRadius: 14,
+    border: "1px solid #E7D57A",
+    background: "#FFFDF5",
+    color: "#5D4B3E",
+    fontWeight: "bold",
+    cursor: "pointer",
+  }}
+>
+  🔗納品する
+</button>
       <a
         href={`/admin/gallery/${galleryId}`}
         style={{
@@ -207,6 +256,7 @@ style={{
       >
         🗑 削除
       </button>
+      </div>
 
       {uploadMessage && (
         <p style={{ margin: "14px 0 0", fontSize: 14 }}>

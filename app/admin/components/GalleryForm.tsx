@@ -3,6 +3,8 @@ type GalleryFormProps = {
   client: string;
   location: string;
   category: string;
+  textColor: string;
+setTextColor: (value: string) => void;
   galleryPassword: string;
   expiresAt: string;
   coverImageKey: string;
@@ -24,6 +26,8 @@ export default function GalleryForm({
   client,
   location,
   category,
+  textColor,
+setTextColor,
   galleryPassword,
   expiresAt,
   coverImageKey,
@@ -90,6 +94,14 @@ export default function GalleryForm({
 <option value="その他">その他</option>
 </select>
 
+<select
+  value={textColor}
+  onChange={(e) => setTextColor(e.target.value)}
+  style={inputStyle}
+>
+  <option value="brown">文字色：ブラウン</option>
+  <option value="white">文字色：ホワイト</option>
+</select>
 
       <input
         placeholder="タイトル（例：Half Birthday）"
@@ -104,6 +116,17 @@ export default function GalleryForm({
         onChange={(e) => setGalleryPassword(e.target.value)}
         style={inputStyle}
       />
+
+
+<div style={{ marginBottom: 8, color: "#5D4B3E" }}>
+  <div style={{ fontSize: 15, fontWeight: 600 }}>
+    📅 納品日を選択
+  </div>
+  <div style={{ fontSize: 12, marginTop: 4 }}>
+    公開終了日は、選択した日付の21日後に自動設定されます。
+  </div>
+</div>
+
 
       <input
         type="date"
