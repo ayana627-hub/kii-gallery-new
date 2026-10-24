@@ -325,10 +325,17 @@ body {
 }
 
 @media (max-width: 767px) {
+  .kii-card-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
   .kii-card-actions > button,
   .kii-card-actions > a {
-    font-size: 11px !important;
-    padding: 10px 5px !important;
+    width: 100% !important;
+    font-size: 12px !important;
+    padding: 12px 5px !important;
     letter-spacing: -0.3px;
   }
 }
